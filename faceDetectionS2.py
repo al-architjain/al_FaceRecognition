@@ -15,9 +15,6 @@ face_pose_predictor = dlib.shape_predictor(predictor_model)
 
 win = dlib.image_window()
 
-# Take the image file name from the command line
-file_name = sys.argv[1]
-
 # Load the image
 image = io.imread(file_name)
 

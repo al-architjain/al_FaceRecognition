@@ -3,6 +3,7 @@ import dlib
 import cv2
 import openface
 
+
 # You can download the required pre-trained face detection model here:
 # http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
 predictor_model = "shape_predictor_68_face_landmarks.dat"
@@ -17,16 +18,17 @@ face_detector = dlib.get_frontal_face_detector()
 face_pose_predictor = dlib.shape_predictor(predictor_model)
 face_aligner = openface.AlignDlib(predictor_model)
 
-# Take the image file name from the command line
-file_name = sys.argv[1]
 
 # Load the image
 image = cv2.imread(file_name)
+img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 	#coz opencv uses BGR as its default color order
 
 # Run the HOG face detector on the image data
 detected_faces = face_detector(image, 1)
 
 print("Found {} faces in the image file {}".format(len(detected_faces), file_name))
+
+win.set_image(img)
 
 # Loop through each face we found in the image
 for i, face_rect in enumerate(detected_faces):
@@ -38,10 +40,13 @@ for i, face_rect in enumerate(detected_faces):
 	# Get the the face's pose
 	pose_landmarks = face_pose_predictor(image, face_rect)
 
+	# win.add_overlay(face_rect)
+	# win.add_overlay(pose_landmarks)
+
 	# Use openface to calculate and perform the face alignment
 	alignedFace = face_aligner.align(534, image, face_rect, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
 
 	# Save the aligned image to a file
-cv2.imwrite("aligned_face_{}.jpg".format(i), alignedFace)
+	cv2.imwrite("aligned_face_{}.jpg".format(i), alignedFace)
 
 dlib.hit_enter_to_continue()
