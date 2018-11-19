@@ -1,4 +1,4 @@
-#!/home/al_architjain/Projects/al_FacialRecoginition/facialEnvironment/bin/python3.5
+#!/home/al_archit/Projects/al_FacialRecoginition/facialEnvironment/bin/python
 # See http://cens.ioc.ee/projects/f2py2e/
 from __future__ import division, print_function
 
