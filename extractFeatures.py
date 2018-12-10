@@ -1,4 +1,5 @@
-#python extract_features.py --dataset recoginisedImages --
+#How to Run:
+#python extractFeatures.py --dataset dataset --encodings encoding.pickle
 
 #Importing Modules
 import os
@@ -17,7 +18,7 @@ ap.add_argument("-e", "--encodings", required=True, help="path to serialized db 
 args = vars(ap.parse_args())
 
 
-class Encodings():
+class featureExtraction():
 
     def __init__(self):
         self.imagePath = list(paths.list_images(args["dataset"]))
@@ -33,7 +34,7 @@ class Encodings():
 
             # Read Image
             image_bgr = cv2.imread(imagePath)
-            image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)  # coz OpenCV stores in BGR :(
+            image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 
             # Detection, Landmark detection, and encoding
             locations = face_recognition.face_locations(image_rgb, model='hog')  # or (model=args["detection_method"])
@@ -55,7 +56,7 @@ class Encodings():
 
 
 def Main():
-    eobj = Encodings()
+    eobj = featureExtraction()
     eobj.Xtract()
     eobj.store()
 
