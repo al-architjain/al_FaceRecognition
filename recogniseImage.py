@@ -1,5 +1,7 @@
-# How to run:
-# python recogniseImage.py --encodings encodings.pickle --image examples/example_01.png
+'''
+    How to Run:
+    python recogniseImage.py --encodings encodings.pickle --image examples/example_01.png
+'''
 
 #Import Packages
 import dlib
@@ -15,21 +17,21 @@ ap.add_argument("-i", "--image", required=True, help="path to input image")
 # ap.add_argument("-d", "--detection-method", type=str, default="cnn", help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
 
+#The Image Recognision class
 class recogniseImage():
 
     def __init__(self):
 
-        print("[INFO] Initializing variables....")
+        print("[INFO] Initializing variables and loading encodings....")
 
         #Read Image
         self.image_bgr = cv2.imread(args["image"])
         self.image_rgb = cv2.cvtColor(self.image_bgr, cv2.COLOR_BGR2RGB)
 
-        # READ pre-trained encoded data
+        #Loading pre-trained encoded data
         self.known_data = pickle.loads(open(args["encodings"], "rb").read())
 
         self.known_name_counts = {}
-
         for iname in self.known_data["names"]:
             self.known_name_counts[iname] = self.known_name_counts.get(iname, 0) + 1
 
@@ -51,12 +53,11 @@ class recogniseImage():
         # Looping over dataset
         names = []
         for encoding in self.encodings:
-
             matches = face_recognition.compare_faces(self.known_data["encodings"], encoding)
             name = "Unknown"
 
+            # check to see if we have found a match
             if True in matches:
-
                 matchedIdxs = [i for (i, b) in enumerate(matches) if b]
                 counts = {}
 

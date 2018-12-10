@@ -1,5 +1,7 @@
-#How to Run:
-#python extractFeatures.py --dataset dataset --encodings encoding.pickle
+'''
+    How to Run:
+    python extractFeatures.py --dataset dataset --encodings encoding.pickle
+'''
 
 #Importing Modules
 import os
