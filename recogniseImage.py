@@ -21,7 +21,6 @@ args = vars(ap.parse_args())
 class recogniseImage():
 
     def __init__(self):
-
         print("[INFO] Initializing variables and loading encodings....")
 
         #Read Image
@@ -70,11 +69,6 @@ class recogniseImage():
 
 
                 maxname = max(countsperc, key=countsperc.get)
-                # maxname = max(counts, key=counts.get)
-                # maxnameperc = (counts[maxname]*100)/self.known_name_counts[maxname]
-                # if maxnameperc >= 50:
-                #     name = maxname + str(maxnameperc) + "%"
-
 
                 if countsperc[maxname]>=50:
                     name = maxname + str(countsperc[maxname]) + "%"
@@ -85,14 +79,12 @@ class recogniseImage():
         # loop over the recognized faces
         for ((top, right, bottom, left), name) in zip(self.locations, names):
             # draw the predicted face name on the image
-            cv2.rectangle(self.image_bgr, (left, top), (right, bottom + 35), (0, 0, 255), 2)
-            # y = top - 15 if top - 15 > 15 else top + 15
-            cv2.rectangle(self.image_bgr, (left, bottom), (right, bottom + 35), (0, 0, 255), cv2.FILLED)
+            cv2.rectangle(self.image_bgr, (left, top), (right, bottom + 35), (51,51, 255 ), 2)
+            cv2.rectangle(self.image_bgr, (left, bottom), (right, bottom + 35), (51, 51, 255), cv2.FILLED)
             font = cv2.FONT_HERSHEY_DUPLEX
             cv2.putText(self.image_bgr, name, (left + 2, bottom + 30), font, 0.85, (255, 255, 255), 1)
 
     def displayResult(self):
-
         print("{INFO] Displaying Result....")
         #Display Output
         image = cv2.cvtColor(self.image_bgr, cv2.COLOR_BGR2RGB)

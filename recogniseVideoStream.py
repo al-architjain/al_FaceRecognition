@@ -1,6 +1,6 @@
 '''
     How to Run:
-    python recognizeVideoStream.py --encodings encodings.pickle
+    python recognizeVideoStream.py --encodingsfile encodings.pickle
 '''
 
 #Import Modules
@@ -14,7 +14,7 @@ import time
 
 #Importing Arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--encodings", required=True, help="path to serialized db of facial encodings")
+ap.add_argument("-e", "--encodingsfile", required=True, help="path to serialized db of facial encodings")
 # ap.add_argument("-d", "--detection-method", type=str, default="hog", help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
 
@@ -25,7 +25,7 @@ class recogniseVideoStream():
     def __init__(self):
         #Loading Data
         print("[INFO] Initializing variables and Loading encodings...")
-        self.known_data = pickle.loads(open(args["encodings"], "rb").read())
+        self.known_data = pickle.loads(open(args["encodingsfile"], "rb").read())
 
         self.known_name_counts = {}
         for iname in self.known_data["names"]:
@@ -47,13 +47,16 @@ class recogniseVideoStream():
                     iname = self.known_data["names"][i]
                     counts[iname] = counts.get(iname, 0) + 1
 
-                maxname = max(counts, key=counts.get)
-                maxnameperc = (counts[maxname] * 100) / self.known_name_counts[maxname]
+                countsperc = {}
+                for iname in counts:
+                    mcount = self.known_name_counts[iname]
+                    ccount = counts[iname]
+                    countsperc[iname] = (ccount * 100) / mcount
 
-                if maxnameperc >= 65:
-                    name = maxname + str(maxnameperc) + "%"
-                else:
-                    name = "Unknown"
+                maxname = max(countsperc, key=countsperc.get)
+
+                if countsperc[maxname] >= 50:
+                    name = maxname + str(countsperc[maxname]) + "%"
 
             # update the list of names
             names.append(name)
