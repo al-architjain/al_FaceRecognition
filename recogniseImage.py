@@ -1,6 +1,6 @@
 '''
     How to Run:
-    python recogniseImage.py --encodings encodings.pickle --image examples/example_01.png
+    python recogniseImage.py --encodingsfile encodings.pickle --image examples/example_01.png
 '''
 
 #Import Packages
@@ -12,7 +12,7 @@ import pickle
 
 #Arguments Importing
 ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--encodings", required=True, help="path to serialized db of facial encodings")
+ap.add_argument("-e", "--encodingsfile", required=True, help="path to serialized db of facial encodings")
 ap.add_argument("-i", "--image", required=True, help="path to input image")
 # ap.add_argument("-d", "--detection-method", type=str, default="cnn", help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
@@ -29,17 +29,15 @@ class recogniseImage():
         self.image_rgb = cv2.cvtColor(self.image_bgr, cv2.COLOR_BGR2RGB)
 
         #Loading pre-trained encoded data
-        self.known_data = pickle.loads(open(args["encodings"], "rb").read())
-
+        self.known_data = pickle.loads(open(args["encodingsfile"], "rb").read())
         self.known_name_counts = {}
         for iname in self.known_data["names"]:
             self.known_name_counts[iname] = self.known_name_counts.get(iname, 0) + 1
 
         # for iname in self.known_name_counts:
-        #     print(iname + str(self.known_name_counts[iname]))
+        #    print(iname + str(self.known_name_counts[iname]))
 
     def xtractFeatures(self):
-
         # Extracting features
         print("[INFO] recognizing faces in given image...")
         self.locations = face_recognition.face_locations(self.image_rgb, model='hog')  # (model=args["detection_method"])
@@ -48,7 +46,6 @@ class recogniseImage():
 
 
     def compareEncodings(self):
-
         print("[INFO] Starting Comparision......")
         # Looping over dataset
         names = []
@@ -59,19 +56,28 @@ class recogniseImage():
             # check to see if we have found a match
             if True in matches:
                 matchedIdxs = [i for (i, b) in enumerate(matches) if b]
-                counts = {}
 
+                counts = {}
                 for i in matchedIdxs:
                     iname = self.known_data["names"][i]
                     counts[iname] = counts.get(iname, 0) + 1
 
-                maxname = max(counts, key=counts.get)
-                maxnameperc = (counts[maxname]*100)/self.known_name_counts[maxname]
+                countsperc = {}
+                for iname in counts:
+                    mcount = self.known_name_counts[iname]
+                    ccount = counts[iname]
+                    countsperc[iname] = (ccount*100)/mcount
 
-                if maxnameperc >= 40:
-                    name = maxname + str(maxnameperc) + "%"
-                else:
-                    name = "Unknown"
+
+                maxname = max(countsperc, key=countsperc.get)
+                # maxname = max(counts, key=counts.get)
+                # maxnameperc = (counts[maxname]*100)/self.known_name_counts[maxname]
+                # if maxnameperc >= 50:
+                #     name = maxname + str(maxnameperc) + "%"
+
+
+                if countsperc[maxname]>=50:
+                    name = maxname + str(countsperc[maxname]) + "%"
 
             # update the list of names
             names.append(name)

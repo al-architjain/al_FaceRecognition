@@ -5,12 +5,14 @@
 
 #Import Modules
 import cv2
-from imutils.video import VideoStream
+# from imutils.video import VideoStream
 import face_recognition
 import argparse
 import imutils
 import pickle
 import time
+import urllib.request
+import numpy as np
 
 #Importing Arguments
 ap = argparse.ArgumentParser()
@@ -51,7 +53,7 @@ class recogniseVideoStream():
                 maxnameperc = (counts[maxname] * 100) / self.known_name_counts[maxname]
 
                 if maxnameperc >= 65:
-                    name = maxname + str(maxnameperc) + "%"
+                    name = maxname + "%.2f"%str(maxnameperc) + "%"
                 else:
                     name = "Unknown"
 
@@ -62,14 +64,22 @@ class recogniseVideoStream():
 
     def startStreaming(self):
         print("[INFO] Starting Video Stream...")
-        streamObj = VideoStream(src=0).start()
         time.sleep(1.0)
+        url = 'http://192.168.42.129:8080/shot.jpg'
 
         while True:
-            frame = streamObj.read()
+
+            imgResponse = urllib.request.urlopen(url)
+            # Numpy to convert into a array
+            imgNp = np.array(bytearray(imgResponse.read()), dtype=np.uint8)
+            # Decode the array to OpenCV usable format
+            frame = cv2.imdecode(imgNp, -1)
+
+            # frame = streamObj.read()
 
             image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image_rgb = imutils.resize(image_rgb, width=750)
+            image_rgb = imutils.resize(image_rgb)
+            # image_rgb = imutils.resize(image_rgb, width=750)
             r = frame.shape[1] / float(image_rgb.shape[1])
 
             #Detecting parameters
@@ -81,12 +91,6 @@ class recogniseVideoStream():
 
             # loop over the recognized faces
             for ((top, right, bottom, left), name) in zip(locations, names):
-                # rescale the face coordinates
-                top = int(top * r)
-                right = int(right * r)
-                bottom = int(bottom * r)
-                left = int(left * r)
-
                 cv2.rectangle(frame, (left, top), (right, bottom + 35), (0, 0, 255), 2)
                 # y = top - 15 if top - 15 > 15 else top + 15
                 cv2.rectangle(frame, (left, bottom), (right, bottom + 35), (0, 0, 255), cv2.FILLED)
