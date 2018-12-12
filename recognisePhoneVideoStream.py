@@ -1,6 +1,6 @@
 '''
     How to Run:
-    python recognizeVideoStream.py --encodingslist encodings.pickle --ip 192.168.43.1:8080
+    python recognizeVideoStream.py --encodingsfileencodings.pickle --ip 192.168.43.1:8080
 '''
 
 #Import Modules
@@ -16,7 +16,7 @@ import numpy as np
 
 #Importing Arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--encodingslist", required=True, help="path to serialized db of facial encodings")
+ap.add_argument("-e", "--encodingsfile", required=True, help="path to serialized db of facial encodings")
 ap.add_argument("-i", "--ip", required=True, help="ip of the phone to connect with")
 # ap.add_argument("-d", "--detection-method", type=str, default="hog", help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
@@ -28,7 +28,7 @@ class recogniseVideoStream():
     def __init__(self):
         #Loading Data
         print("[INFO] Initializing variables and Loading encodings...")
-        self.known_data = pickle.loads(open(args["encodingslist"], "rb").read())
+        self.known_data = pickle.loads(open(args["encodingsfile"], "rb").read())
         self.ipadd = args["ip"]
 
         self.known_name_counts = {}

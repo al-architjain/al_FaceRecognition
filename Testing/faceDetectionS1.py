@@ -1,5 +1,6 @@
 import sys
 import dlib
+import cv2
 from skimage import io
 
 # Take the image file name from the command line
@@ -20,7 +21,7 @@ detected_faces = face_detector(image, 1)
 print("I found {} faces in the file {}".format(len(detected_faces), file_name))
 
 # Open a window on the desktop showing the image
-win.set_image(image)
+# win.set_image(image)
 
 # Loop through each face we found in the image
 for i, face_rect in enumerate(detected_faces):
@@ -29,8 +30,11 @@ for i, face_rect in enumerate(detected_faces):
     print("- Face #{} found at Left: {} Top: {} Right: {} Bottom: {}".format(i, face_rect.left(), face_rect.top(),
                                                                              face_rect.right(), face_rect.bottom()))
 
-    # Draw a box around each face we found
-    win.add_overlay(face_rect)
+    cv2.rectangle(image, (face_rect.left(), face_rect.top()), (face_rect.right(), face_rect.bottom()), (255, 51, 51), 3)
+    # # Draw a box around each face we found
+    # win.add_overlay(face_rect)
+
+win.set_image(image)
 
 # Wait until the user hits <enter> to close the window
 dlib.hit_enter_to_continue()

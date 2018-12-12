@@ -1,0 +1,15 @@
+Commands to run the file:
+
+1. extractFeatures.py
+    python extractFeatures.py --dataset dataset --encodingsfile <filename to encode to>
+
+2. recogniseImage.py
+    python recogniseImage.py --encodingsfile encodinghog.pickle --image Samples/<filename>
+
+3. recogniseVideoStream.py
+    python recogniseVideoStream.py --encodingsfile encodinghog.pickle
+
+4. recognisePhoneVideoStream.py
+    python recognisePhoneVideoStream.py --encodingsfile encodinghog.pickle --ip 192.168.43.1:8080
+
+5.
